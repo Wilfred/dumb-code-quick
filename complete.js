@@ -13,30 +13,23 @@ var code = [
 var ast = recast.parse(code);
 
 // Grab a reference to the function declaration we just parsed.
-var add = ast.program.body[0];
+var f = ast.program.body[0];
 
 // Make sure it's a FunctionDeclaration (optional).
 var n = recast.types.namedTypes;
-n.FunctionDeclaration.assert(add);
+n.FunctionDeclaration.assert(f);
 
 // If you choose to use recast.builders to construct new AST nodes, all builder
 // arguments will be dynamically type-checked against the Mozilla Parser API.
 var b = recast.types.builders;
 
-// This kind of manipulation should seem familiar if you've used Esprima or the
-// Mozilla Parser API before.
-ast.program.body[0] = b.variableDeclaration("var", [
-  b.variableDeclarator(
-    add.id,
-    b.functionExpression(
-      null, // Anonymize the function expression.
-      add.params,
-      add.body
-    )
-  )
-]);
+function appendReturn(block, id) {
+  var stmts = block.body;
+  stmts = stmts.concat([b.returnStatement(id)]);
 
-// Just for fun, because addition is commutative:
-add.params.push(add.params.shift());
+  return b.blockStatement(stmts);
+}
+
+f.body = appendReturn(f.body, b.identifier("foo"));
 
 console.log(recast.print(ast).code);
