@@ -1,17 +1,18 @@
 {
   "name": "tdd_complete",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "description": "A test-driven code completion tool",
+  "main": "complete.js",
   "scripts": {
+    "start": "node complete.js",
     "test": "jest"
   },
   "author": "",
   "license": "MIT",
   "dependencies": {
-    "acorn": "^6.0.4",
     "acorn-loose": "^6.0.0",
     "jest": "^23.6.0",
+    "recast": "^0.16.1",
     "vm2": "^3.6.4"
   }
 }
