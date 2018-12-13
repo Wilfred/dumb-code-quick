@@ -30,6 +30,11 @@ function appendReturn(block, id) {
   return b.blockStatement(stmts);
 }
 
-f.body = appendReturn(f.body, b.identifier("foo"));
+let body = f.body;
+f.params.forEach(param => {
+  let name = param.name;
+  f.body = appendReturn(body, b.identifier(name));
 
-console.log(recast.print(ast).code);
+  // eslint-disable-next-line no-console
+  console.log(recast.print(ast).code);
+});
