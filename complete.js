@@ -1,13 +1,10 @@
+let vm = require("vm");
 let recast = require("recast");
+let b = recast.types.builders;
+let n = recast.types.namedTypes;
 
 // Let's turn this function declaration into a variable declaration.
-let code = [
-  "function add(a, b) {",
-  "  return a +",
-  "    // Weird formatting, huh?",
-  "    b;",
-  "}"
-].join("\n");
+let code = "function add(a, b) {}";
 
 // Parse the code using an interface similar to require("esprima").parse.
 let ast = recast.parse(code);
@@ -16,10 +13,7 @@ let ast = recast.parse(code);
 let f = ast.program.body[0];
 
 // Make sure it's a FunctionDeclaration (optional).
-let n = recast.types.namedTypes;
 n.FunctionDeclaration.assert(f);
-
-let b = recast.types.builders;
 
 function appendReturn(block, id) {
   let stmts = block.body;
@@ -33,6 +27,13 @@ f.params.forEach(param => {
   let name = param.name;
   f.body = appendReturn(body, b.identifier(name));
 
+  let finalCode = recast.print(ast).code + "\nadd(1, 2);";
+
   // eslint-disable-next-line no-console
-  console.log(recast.print(ast).code);
+  console.log(finalCode);
+
+  let result = vm.runInNewContext(finalCode);
+
+  // eslint-disable-next-line no-console
+  console.log(result);
 });
