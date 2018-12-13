@@ -11,6 +11,7 @@
   "license": "MIT",
   "dependencies": {
     "acorn-loose": "^6.0.0",
+    "eslint": "^5.10.0",
     "jest": "^23.6.0",
     "recast": "^0.16.1",
     "vm2": "^3.6.4"
