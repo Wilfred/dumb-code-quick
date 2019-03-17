@@ -15,23 +15,24 @@ function findFunc(ast, funcName) {
   }
 }
 
+function appendReturn(block, name) {
+  let id = b.identifier(name);
+  let stmts = block.body;
+  stmts = stmts.concat([b.returnStatement(id)]);
+
+  return b.blockStatement(stmts);
+}
+
 function parseAndEval(code, funcName) {
   // Parse the code using an interface similar to require("esprima").parse.
   let ast = recast.parse(code);
 
   let f = findFunc(ast, funcName);
 
-  function appendReturn(block, id) {
-    let stmts = block.body;
-    stmts = stmts.concat([b.returnStatement(id)]);
-
-    return b.blockStatement(stmts);
-  }
-
   let body = f.body;
   f.params.forEach(param => {
     let name = param.name;
-    f.body = appendReturn(body, b.identifier(name));
+    f.body = appendReturn(body, name);
 
     let addedCall = "\n\nexports.result = " + funcName + "(1, 2);";
     let finalCode = recast.print(ast).code + addedCall;
