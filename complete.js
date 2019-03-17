@@ -23,22 +23,21 @@ function appendReturn(block, name) {
   return b.blockStatement(stmts);
 }
 
-function parseAndEval(code, funcName) {
+function parseAndEval(code, funcName, desiredOutput) {
   // Parse the code using an interface similar to require("esprima").parse.
   let ast = recast.parse(code);
 
   let f = findFunc(ast, funcName);
 
+  let found = null;
   let body = f.body;
   f.params.forEach(param => {
     let name = param.name;
     f.body = appendReturn(body, name);
 
-    let addedCall = "\n\nexports.result = " + funcName + "(1, 2);";
-    let finalCode = recast.print(ast).code + addedCall;
-
-    // eslint-disable-next-line no-console
-    console.log(finalCode);
+    let addedCall = "\n\nexports.result = " + funcName + "(1);";
+    let modifiedCode = recast.print(ast).code;
+    let finalCode = modifiedCode + addedCall;
 
     const vm = new vm2.NodeVM({
       requireNative: ["module"],
@@ -46,12 +45,25 @@ function parseAndEval(code, funcName) {
         external: true
       }
     });
-    let result = vm.run(finalCode);
+    let result = vm.run(finalCode).result;
 
-    // eslint-disable-next-line no-console
-    console.log(result.result);
+    if (result === desiredOutput) {
+      found = ast;
+      // TODO: early termination.
+    }
   });
+
+  return found;
 }
 
 let code = fs.readFileSync("roman_numerals.js", "utf8");
-parseAndEval(code, "toNumber");
+let found = parseAndEval(code, "toNumber", 1);
+if (found === null) {
+  // eslint-disable-next-line no-console
+  console.log("No completion found that passes this test.");
+} else {
+  // eslint-disable-next-line no-console
+  console.log("Found!");
+  // eslint-disable-next-line no-console
+  console.log(recast.print(found).code);
+}

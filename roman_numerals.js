@@ -1,5 +1,5 @@
 function toNumber(romanStr) {
-  return 0;
+  var x = 42;
 }
 
 exports.toNumber = toNumber;
