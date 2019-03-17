@@ -1,3 +1,4 @@
+let fs = require("fs");
 let vm2 = require("vm2");
 let recast = require("recast");
 let b = recast.types.builders;
@@ -25,7 +26,8 @@ function parseAndEval(code) {
     let name = param.name;
     f.body = appendReturn(body, b.identifier(name));
 
-    let finalCode = recast.print(ast).code + "\nadd(1, 2);";
+    let finalCode =
+      recast.print(ast).code + "\nexports.result = toNumber(1, 2);";
 
     // eslint-disable-next-line no-console
     console.log(finalCode);
@@ -39,10 +41,9 @@ function parseAndEval(code) {
     let result = vm.run(finalCode);
 
     // eslint-disable-next-line no-console
-    console.log(result);
+    console.log(result.result);
   });
 }
 
-// Let's turn this function declaration into a variable declaration.
-let code = "function add(a, b) {}";
+let code = fs.readFileSync("roman_numerals.js", "utf8");
 parseAndEval(code);
