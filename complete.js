@@ -4,15 +4,22 @@ let recast = require("recast");
 let b = recast.types.builders;
 let n = recast.types.namedTypes;
 
-function parseAndEval(code) {
+function findFunc(ast, funcName) {
+  for (let i = 0; i < ast.program.body.length; i++) {
+    let node = ast.program.body[i];
+    if (n.FunctionDeclaration.check(node)) {
+      if (node.id.name === funcName) {
+        return node;
+      }
+    }
+  }
+}
+
+function parseAndEval(code, funcName) {
   // Parse the code using an interface similar to require("esprima").parse.
   let ast = recast.parse(code);
 
-  // Grab a reference to the function declaration we just parsed.
-  let f = ast.program.body[0];
-
-  // Make sure it's a FunctionDeclaration (optional).
-  n.FunctionDeclaration.assert(f);
+  let f = findFunc(ast, funcName);
 
   function appendReturn(block, id) {
     let stmts = block.body;
@@ -26,8 +33,8 @@ function parseAndEval(code) {
     let name = param.name;
     f.body = appendReturn(body, b.identifier(name));
 
-    let finalCode =
-      recast.print(ast).code + "\nexports.result = toNumber(1, 2);";
+    let addedCall = "\n\nexports.result = " + funcName + "(1, 2);";
+    let finalCode = recast.print(ast).code + addedCall;
 
     // eslint-disable-next-line no-console
     console.log(finalCode);
@@ -46,4 +53,4 @@ function parseAndEval(code) {
 }
 
 let code = fs.readFileSync("roman_numerals.js", "utf8");
-parseAndEval(code);
+parseAndEval(code, "toNumber");
