@@ -64,14 +64,20 @@ function parseAndEval(code, funcName, desiredOutput) {
   return found;
 }
 
-let code = fs.readFileSync("roman_numerals.js", "utf8");
-let found = parseAndEval(code, "toNumber", 1);
-if (found === null) {
-  // eslint-disable-next-line no-console
-  console.log("No completion found that passes this test.");
-} else {
-  // eslint-disable-next-line no-console
-  console.log("Found!");
-  // eslint-disable-next-line no-console
-  console.log(recast.print(found).code);
+function completeFromTest(srcPath, targetFunc, testPath) {
+  let code = fs.readFileSync(srcPath, "utf8");
+  fs.readFileSync(testPath, "utf8"); // TODO
+
+  let found = parseAndEval(code, targetFunc, 1);
+  if (found === null) {
+    // eslint-disable-next-line no-console
+    console.log("No completion found that passes this test.");
+  } else {
+    // eslint-disable-next-line no-console
+    console.log("Found!");
+    // eslint-disable-next-line no-console
+    console.log(recast.print(found).code);
+  }
 }
+
+completeFromTest("roman_numerals.js", "toNumber", "roman_numerals.test.js");
