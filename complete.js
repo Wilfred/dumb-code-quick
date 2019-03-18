@@ -23,6 +23,21 @@ function appendReturn(block, name) {
   return b.blockStatement(stmts);
 }
 
+function sandboxEval(code) {
+  const vm = new vm2.NodeVM({
+    sandbox: {
+      test: function() {
+        console.log("inside test();");
+      }
+    },
+    requireNative: ["module"],
+    require: {
+      external: true
+    }
+  });
+  return vm.run(code).result;
+}
+
 function parseAndEval(code, funcName, desiredOutput) {
   // Parse the code using an interface similar to require("esprima").parse.
   let ast = recast.parse(code);
@@ -38,14 +53,7 @@ function parseAndEval(code, funcName, desiredOutput) {
     let addedCall = "\n\nexports.result = " + funcName + "(1);";
     let modifiedCode = recast.print(ast).code;
     let finalCode = modifiedCode + addedCall;
-
-    const vm = new vm2.NodeVM({
-      requireNative: ["module"],
-      require: {
-        external: true
-      }
-    });
-    let result = vm.run(finalCode).result;
+    let result = sandboxEval(finalCode);
 
     if (result === desiredOutput) {
       found = ast;
