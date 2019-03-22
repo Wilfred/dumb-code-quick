@@ -44,24 +44,28 @@ function sandboxEval(code, srcPath) {
   return failureCount === 0;
 }
 
-function parse(code) {
+function parse(path) {
+  let code = fs.readFileSync(path, "utf8");
   return recast.parse(code);
 }
 
-function evalForOutput(ast, srcPath, funcName, testSrc, testPath) {
-  let f = findFunc(ast, funcName);
+function evalForOutput(srcPath, funcName, testPath) {
+  let srcAst = parse(srcPath);
+  let testSrc = fs.readFileSync(testPath, "utf8");
+
+  let f = findFunc(srcAst, funcName);
 
   let found = null;
   let body = f.body;
   f.params.forEach(param => {
     let name = param.name;
     f.body = appendReturn(body, name);
-    let modifiedCode = recast.print(ast).code;
+    let modifiedCode = recast.print(srcAst).code;
 
     fs.writeFileSync(srcPath, modifiedCode);
 
     if (sandboxEval(testSrc, testPath)) {
-      found = ast;
+      found = srcAst;
       // TODO: early termination.
     }
 
@@ -72,11 +76,7 @@ function evalForOutput(ast, srcPath, funcName, testSrc, testPath) {
 }
 
 function completeFromTest(srcPath, targetFunc, testPath) {
-  let code = fs.readFileSync(srcPath, "utf8");
-  let testSrc = fs.readFileSync(testPath, "utf8");
-
-  let ast = parse(code);
-  let found = evalForOutput(ast, srcPath, targetFunc, testSrc, testPath);
+  let found = evalForOutput(srcPath, targetFunc, testPath);
   if (found === null) {
     // eslint-disable-next-line no-console
     console.log("No completion found that passes this test.");
