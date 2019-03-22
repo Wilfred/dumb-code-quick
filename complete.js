@@ -26,8 +26,8 @@ function appendReturn(block, name) {
 function sandboxEval(code) {
   const vm = new vm2.NodeVM({
     sandbox: {
-      test: function() {
-        console.log("inside test();");
+      test: function(_description, expectFn) {
+        expectFn();
       }
     },
     requireNative: ["module"],
