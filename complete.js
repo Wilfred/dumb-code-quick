@@ -24,10 +24,15 @@ function appendReturn(block, name) {
 }
 
 function sandboxEval(code, srcPath) {
+  let failureCount = 0;
   const vm = new vm2.NodeVM({
     sandbox: {
       test: function(_description, expectFn) {
-        expectFn();
+        try {
+          expectFn();
+        } catch (e) {
+          failureCount += 1;
+        }
       }
     },
     requireNative: ["module"],
@@ -35,14 +40,15 @@ function sandboxEval(code, srcPath) {
       external: true
     }
   });
-  return vm.run(code, srcPath).result;
+  vm.run(code, srcPath);
+  return failureCount === 0;
 }
 
 function parse(code) {
   return recast.parse(code);
 }
 
-function evalForOutput(ast, srcPath, funcName, desiredOutput) {
+function evalForOutput(ast, srcPath, funcName, testSrc, testPath) {
   let f = findFunc(ast, funcName);
 
   let found = null;
@@ -54,14 +60,12 @@ function evalForOutput(ast, srcPath, funcName, desiredOutput) {
 
     fs.writeFileSync(srcPath, modifiedCode);
 
-    let addedCall = "\n\nexports.result = " + funcName + "(1);";
-    let finalCode = modifiedCode + addedCall;
-    let result = sandboxEval(finalCode, srcPath);
-
-    if (result === desiredOutput) {
+    if (sandboxEval(testSrc, testPath)) {
       found = ast;
       // TODO: early termination.
     }
+
+    // TODO: write the original version back.
   });
 
   return found;
@@ -69,10 +73,10 @@ function evalForOutput(ast, srcPath, funcName, desiredOutput) {
 
 function completeFromTest(srcPath, targetFunc, testPath) {
   let code = fs.readFileSync(srcPath, "utf8");
-  fs.readFileSync(testPath, "utf8"); // TODO
+  let testSrc = fs.readFileSync(testPath, "utf8");
 
   let ast = parse(code);
-  let found = evalForOutput(ast, srcPath, targetFunc, 1);
+  let found = evalForOutput(ast, srcPath, targetFunc, testSrc, testPath);
   if (found === null) {
     // eslint-disable-next-line no-console
     console.log("No completion found that passes this test.");
