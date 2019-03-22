@@ -38,10 +38,11 @@ function sandboxEval(code) {
   return vm.run(code).result;
 }
 
-function parseAndEval(code, srcPath, funcName, desiredOutput) {
-  // Parse the code using an interface similar to require("esprima").parse.
-  let ast = recast.parse(code);
+function parse(code) {
+  return recast.parse(code);
+}
 
+function evalForOutput(ast, srcPath, funcName, desiredOutput) {
   let f = findFunc(ast, funcName);
 
   let found = null;
@@ -70,7 +71,8 @@ function completeFromTest(srcPath, targetFunc, testPath) {
   let code = fs.readFileSync(srcPath, "utf8");
   fs.readFileSync(testPath, "utf8"); // TODO
 
-  let found = parseAndEval(code, srcPath, targetFunc, 1);
+  let ast = parse(code);
+  let found = evalForOutput(ast, srcPath, targetFunc, 1);
   if (found === null) {
     // eslint-disable-next-line no-console
     console.log("No completion found that passes this test.");
