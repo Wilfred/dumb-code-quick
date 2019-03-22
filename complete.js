@@ -44,13 +44,13 @@ function sandboxEval(code, srcPath) {
   return failureCount === 0;
 }
 
-function parse(path) {
-  let code = fs.readFileSync(path, "utf8");
+function parse(code) {
   return recast.parse(code);
 }
 
 function evalForOutput(srcPath, funcName, testPath) {
-  let srcAst = parse(srcPath);
+  let src = fs.readFileSync(srcPath, "utf8");
+  let srcAst = parse(src);
   let testSrc = fs.readFileSync(testPath, "utf8");
 
   let f = findFunc(srcAst, funcName);
@@ -69,7 +69,7 @@ function evalForOutput(srcPath, funcName, testPath) {
       // TODO: early termination.
     }
 
-    // TODO: write the original version back.
+    fs.writeFileSync(srcPath, src);
   });
 
   return found;
