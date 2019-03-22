@@ -23,7 +23,7 @@ function appendReturn(block, name) {
   return b.blockStatement(stmts);
 }
 
-function sandboxEval(code) {
+function sandboxEval(code, srcPath) {
   const vm = new vm2.NodeVM({
     sandbox: {
       test: function(_description, expectFn) {
@@ -35,7 +35,7 @@ function sandboxEval(code) {
       external: true
     }
   });
-  return vm.run(code).result;
+  return vm.run(code, srcPath).result;
 }
 
 function parse(code) {
@@ -56,7 +56,7 @@ function evalForOutput(ast, srcPath, funcName, desiredOutput) {
 
     let addedCall = "\n\nexports.result = " + funcName + "(1);";
     let finalCode = modifiedCode + addedCall;
-    let result = sandboxEval(finalCode);
+    let result = sandboxEval(finalCode, srcPath);
 
     if (result === desiredOutput) {
       found = ast;
