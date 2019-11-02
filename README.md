@@ -33,6 +33,9 @@ association-based a close second.
 
 This paper seems to have culminated in https://www.eclipse.org/recommenders/
 
+### Statistical Semantic Language Model for Source Code (2013)
+Tung Thanh Nguyen, Anh Tuan Nguyen, Hoan Anh Nguyen, and Tien N. Nguyen
+
 ## Interesting typescript projects
 
 Canidates for generating statistical models.
