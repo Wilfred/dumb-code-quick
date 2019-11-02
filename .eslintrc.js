@@ -10,6 +10,7 @@ module.exports = {
   },
   rules: {
     "linebreak-style": ["error", "unix"],
+    "no-unused-vars": ["warn"],
     quotes: ["error", "double"],
     semi: ["error", "always"]
   }
