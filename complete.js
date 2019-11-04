@@ -60,6 +60,9 @@ function evalForOutput(srcPath, funcName, testPath) {
 
   let found = null;
   let body = f.body;
+  // TODO: see if it works before we change anything
+  // TODO: try returning literals too.
+
   f.params.forEach(param => {
     let name = param.name;
     f.body = appendReturn(body, name);
