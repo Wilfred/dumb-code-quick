@@ -26,6 +26,14 @@ function appendReturn(block, name) {
   return b.blockStatement(stmts);
 }
 
+function appendReturnLiteral(block, value) {
+  let id = b.literal(value);
+  let stmts = block.body;
+  stmts = stmts.concat([b.returnStatement(id)]);
+
+  return b.blockStatement(stmts);
+}
+
 function sandboxEval(code, srcPath) {
   let failureCount = 0;
   const vm = new vm2.NodeVM({
@@ -63,12 +71,27 @@ function evalForOutput(srcPath, funcName, testPath) {
   let found = null;
   let body = f.body;
   // TODO: see if it works before we change anything
-  // TODO: try returning literals too.
 
   _.forEach(f.params, param => {
     let name = param.name;
     f.body = appendReturn(body, name);
     let modifiedCode = recast.print(srcAst).code;
+
+    fs.writeFileSync(srcPath, modifiedCode);
+    delete require.cache[srcPath];
+
+    if (sandboxEval(testSrc, testPath)) {
+      found = srcAst;
+      return false;
+    }
+
+    fs.writeFileSync(srcPath, src);
+  });
+
+  _.forEach([0, 1, -1, 2], val => {
+    f.body = appendReturnLiteral(body, val);
+    let modifiedCode = recast.print(srcAst).code;
+    console.log(modifiedCode);
 
     fs.writeFileSync(srcPath, modifiedCode);
     delete require.cache[srcPath];
