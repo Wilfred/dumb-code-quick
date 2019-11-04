@@ -2,6 +2,8 @@ let fs = require("fs");
 let path = require("path");
 let vm2 = require("vm2");
 let recast = require("recast");
+let _ = require("lodash");
+
 let b = recast.types.builders;
 let n = recast.types.namedTypes;
 
@@ -63,7 +65,7 @@ function evalForOutput(srcPath, funcName, testPath) {
   // TODO: see if it works before we change anything
   // TODO: try returning literals too.
 
-  f.params.forEach(param => {
+  _.forEach(f.params, param => {
     let name = param.name;
     f.body = appendReturn(body, name);
     let modifiedCode = recast.print(srcAst).code;
@@ -73,7 +75,7 @@ function evalForOutput(srcPath, funcName, testPath) {
 
     if (sandboxEval(testSrc, testPath)) {
       found = srcAst;
-      // TODO: early termination.
+      return false;
     }
 
     fs.writeFileSync(srcPath, src);
