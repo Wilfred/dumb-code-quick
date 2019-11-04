@@ -1,4 +1,5 @@
 let fs = require("fs");
+let path = require("path");
 let vm2 = require("vm2");
 let recast = require("recast");
 let b = recast.types.builders;
@@ -49,6 +50,8 @@ function parse(code) {
 }
 
 function evalForOutput(srcPath, funcName, testPath) {
+  srcPath = path.resolve(srcPath);
+
   let src = fs.readFileSync(srcPath, "utf8");
   let srcAst = parse(src);
   let testSrc = fs.readFileSync(testPath, "utf8");
@@ -63,6 +66,7 @@ function evalForOutput(srcPath, funcName, testPath) {
     let modifiedCode = recast.print(srcAst).code;
 
     fs.writeFileSync(srcPath, modifiedCode);
+    delete require.cache[srcPath];
 
     if (sandboxEval(testSrc, testPath)) {
       found = srcAst;
