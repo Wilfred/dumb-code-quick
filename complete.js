@@ -89,9 +89,8 @@ function evalForOutput(srcPath, funcName, testPath) {
   let body = f.body;
   // TODO: see if it works before we change anything
 
-  _.forEach(f.params, param => {
-    let name = param.name;
-    f.body = appendReturn(body, name);
+  _.forEach([0, 1, -1, 2], val => {
+    f.body = appendReturnLiteral(body, val);
     let modifiedCode = recast.print(srcAst).code;
 
     if (sandboxEval(modifiedCode, srcPath, testSrc, testPath)) {
@@ -100,8 +99,13 @@ function evalForOutput(srcPath, funcName, testPath) {
     }
   });
 
-  _.forEach([0, 1, -1, 2], val => {
-    f.body = appendReturnLiteral(body, val);
+  if (found) {
+    return found;
+  }
+
+  _.forEach(f.params, param => {
+    let name = param.name;
+    f.body = appendReturn(body, name);
     let modifiedCode = recast.print(srcAst).code;
 
     if (sandboxEval(modifiedCode, srcPath, testSrc, testPath)) {
