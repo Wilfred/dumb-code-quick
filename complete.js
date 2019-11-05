@@ -34,25 +34,42 @@ function appendReturnLiteral(block, value) {
   return b.blockStatement(stmts);
 }
 
-function sandboxEval(code, srcPath) {
-  let failureCount = 0;
-  const vm = new vm2.NodeVM({
-    sandbox: {
-      test: function(_description, expectFn) {
-        try {
-          expectFn();
-        } catch (e) {
-          failureCount += 1;
+function withPatchedSrc(newSrc, srcPath, cb) {
+  srcPath = path.resolve(srcPath);
+  let oldSrc = fs.readFileSync(srcPath, "utf8");
+
+  fs.writeFileSync(srcPath, newSrc);
+  delete require.cache[srcPath];
+
+  let result = cb();
+
+  fs.writeFileSync(srcPath, oldSrc);
+  delete require.cache[srcPath];
+
+  return result;
+}
+
+function sandboxEval(srcCode, srcPath, testCode, testPath) {
+  return withPatchedSrc(srcCode, srcPath, () => {
+    let failureCount = 0;
+    const vm = new vm2.NodeVM({
+      sandbox: {
+        test: function(_description, expectFn) {
+          try {
+            expectFn();
+          } catch (e) {
+            failureCount += 1;
+          }
         }
+      },
+      requireNative: ["module"],
+      require: {
+        external: true
       }
-    },
-    requireNative: ["module"],
-    require: {
-      external: true
-    }
+    });
+    vm.run(testCode, testPath);
+    return failureCount === 0;
   });
-  vm.run(code, srcPath);
-  return failureCount === 0;
 }
 
 function parse(code) {
@@ -77,31 +94,20 @@ function evalForOutput(srcPath, funcName, testPath) {
     f.body = appendReturn(body, name);
     let modifiedCode = recast.print(srcAst).code;
 
-    fs.writeFileSync(srcPath, modifiedCode);
-    delete require.cache[srcPath];
-
-    if (sandboxEval(testSrc, testPath)) {
+    if (sandboxEval(modifiedCode, srcPath, testSrc, testPath)) {
       found = srcAst;
       return false;
     }
-
-    fs.writeFileSync(srcPath, src);
   });
 
   _.forEach([0, 1, -1, 2], val => {
     f.body = appendReturnLiteral(body, val);
     let modifiedCode = recast.print(srcAst).code;
-    console.log(modifiedCode);
 
-    fs.writeFileSync(srcPath, modifiedCode);
-    delete require.cache[srcPath];
-
-    if (sandboxEval(testSrc, testPath)) {
+    if (sandboxEval(modifiedCode, srcPath, testSrc, testPath)) {
       found = srcAst;
       return false;
     }
-
-    fs.writeFileSync(srcPath, src);
   });
 
   return found;
