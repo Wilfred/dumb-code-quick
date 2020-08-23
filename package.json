@@ -1,5 +1,5 @@
 {
-  "name": "tdd_complete",
+  "name": "dumb_code_quick",
   "version": "1.0.0",
   "description": "A test-driven code completion tool",
   "main": "complete.js",
