@@ -1,7 +1,7 @@
-![logo](logo.png)
+# Dumb Code Quick 🤔⌨️💨
 
-Finishe is a project exploring code completion inside implementation
-code, when you already have a unit test.
+Dumb Code Quick (DCQ) is a project exploring code completion inside
+implementation code, when you already have a unit test.
 
 ## Related Research
 
