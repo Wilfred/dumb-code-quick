@@ -130,4 +130,4 @@ function completeFromTest(srcPath, targetFunc, testPath) {
   }
 }
 
-completeFromTest("roman_numerals.js", "toNumber", "roman_numerals.test.js");
+completeFromTest("examples/roman_numerals.js", "toNumber", "examples/roman_numerals.test.js");
