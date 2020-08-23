@@ -6,12 +6,12 @@ module.exports = {
   },
   extends: "eslint:recommended",
   parserOptions: {
-    ecmaVersion: 2015
+    ecmaVersion: 2015,
   },
   rules: {
     "linebreak-style": ["error", "unix"],
     "no-unused-vars": ["warn"],
     quotes: ["error", "double"],
-    semi: ["error", "always"]
-  }
+    semi: ["error", "always"],
+  },
 };
