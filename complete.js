@@ -54,18 +54,18 @@ function sandboxEval(srcCode, srcPath, testCode, testPath) {
     let failureCount = 0;
     const vm = new vm2.NodeVM({
       sandbox: {
-        test: function(_description, expectFn) {
+        test: function (_description, expectFn) {
           try {
             expectFn();
           } catch (e) {
             failureCount += 1;
           }
-        }
+        },
       },
       requireNative: ["module"],
       require: {
-        external: true
-      }
+        external: true,
+      },
     });
     vm.run(testCode, testPath);
     return failureCount === 0;
@@ -89,7 +89,7 @@ function evalForOutput(srcPath, funcName, testPath) {
   let body = f.body;
   // TODO: see if it works before we change anything
 
-  _.forEach([0, 1, -1, 2], val => {
+  _.forEach([0, 1, -1, 2], (val) => {
     f.body = appendReturnLiteral(body, val);
     let modifiedCode = recast.print(srcAst).code;
 
@@ -103,7 +103,7 @@ function evalForOutput(srcPath, funcName, testPath) {
     return found;
   }
 
-  _.forEach(f.params, param => {
+  _.forEach(f.params, (param) => {
     let name = param.name;
     f.body = appendReturn(body, name);
     let modifiedCode = recast.print(srcAst).code;
