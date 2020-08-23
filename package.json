@@ -11,7 +11,7 @@
   "author": "",
   "license": "MIT",
   "dependencies": {
-    "acorn-loose": "^6.0.0",
+    "acorn-loose": "^8.0.0",
     "expect": "^23.6.0",
     "jest": "^23.6.0",
     "lodash": "^4.17.20",
