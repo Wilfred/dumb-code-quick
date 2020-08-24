@@ -1,9 +1,9 @@
 import * as recast from "recast";
 import * as fs from "fs";
 import * as path from "path";
+import * as _ from "lodash";
 
 let vm2 = require("vm2");
-let _ = require("lodash");
 
 let b = recast.types.builders;
 let n = recast.types.namedTypes;
