@@ -3,12 +3,11 @@ import * as fs from "fs";
 import * as path from "path";
 import * as _ from "lodash";
 
+import { builders as b, namedTypes as n } from "ast-types";
+
 let vm2 = require("vm2");
 
-let b = recast.types.builders;
-let n = recast.types.namedTypes;
-
-function findFunc(ast, funcName: string) {
+function findFunc(ast: n.File, funcName: string): n.FunctionDeclaration {
   for (let i = 0; i < ast.program.body.length; i++) {
     let node = ast.program.body[i];
     if (n.FunctionDeclaration.check(node)) {
@@ -19,7 +18,7 @@ function findFunc(ast, funcName: string) {
   }
 }
 
-function appendReturn(block, name: string) {
+function appendReturn(block: n.BlockStatement, name: string): n.BlockStatement {
   let id = b.identifier(name);
   let stmts = block.body;
   stmts = stmts.concat([b.returnStatement(id)]);
@@ -27,7 +26,10 @@ function appendReturn(block, name: string) {
   return b.blockStatement(stmts);
 }
 
-function appendReturnLiteral(block, value) {
+function appendReturnLiteral(
+  block: n.BlockStatement,
+  value: number
+): n.BlockStatement {
   let id = b.literal(value);
   let stmts = block.body;
   stmts = stmts.concat([b.returnStatement(id)]);
@@ -35,7 +37,7 @@ function appendReturnLiteral(block, value) {
   return b.blockStatement(stmts);
 }
 
-function withPatchedSrc<T>(newSrc: string, srcPath: string, cb: () => T) {
+function withPatchedSrc<T>(newSrc: string, srcPath: string, cb: () => T): T {
   srcPath = path.resolve(srcPath);
   let oldSrc = fs.readFileSync(srcPath, "utf8");
 
@@ -50,7 +52,12 @@ function withPatchedSrc<T>(newSrc: string, srcPath: string, cb: () => T) {
   return result;
 }
 
-function sandboxEval(srcCode: string, srcPath: string, testCode: string, testPath: string) {
+function sandboxEval(
+  srcCode: string,
+  srcPath: string,
+  testCode: string,
+  testPath: string
+) {
   return withPatchedSrc(srcCode, srcPath, () => {
     let failureCount = 0;
     const vm = new vm2.NodeVM({
@@ -118,7 +125,11 @@ function evalForOutput(srcPath: string, funcName: string, testPath: string) {
   return found;
 }
 
-function completeFromTest(srcPath: string, targetFunc: string, testPath: string) {
+function completeFromTest(
+  srcPath: string,
+  targetFunc: string,
+  testPath: string
+) {
   let found = evalForOutput(srcPath, targetFunc, testPath);
   if (found === null) {
     // eslint-disable-next-line no-console
