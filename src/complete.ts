@@ -1,13 +1,14 @@
+import * as recast from "recast";
+
 let fs = require("fs");
 let path = require("path");
 let vm2 = require("vm2");
-let recast = require("recast");
 let _ = require("lodash");
 
 let b = recast.types.builders;
 let n = recast.types.namedTypes;
 
-function findFunc(ast, funcName) {
+function findFunc(ast, funcName: string) {
   for (let i = 0; i < ast.program.body.length; i++) {
     let node = ast.program.body[i];
     if (n.FunctionDeclaration.check(node)) {
@@ -18,7 +19,7 @@ function findFunc(ast, funcName) {
   }
 }
 
-function appendReturn(block, name) {
+function appendReturn(block, name: string) {
   let id = b.identifier(name);
   let stmts = block.body;
   stmts = stmts.concat([b.returnStatement(id)]);
@@ -72,11 +73,11 @@ function sandboxEval(srcCode, srcPath, testCode, testPath) {
   });
 }
 
-function parse(code) {
+function parse(code: string): any {
   return recast.parse(code);
 }
 
-function evalForOutput(srcPath, funcName, testPath) {
+function evalForOutput(srcPath: string, funcName: string, testPath: string) {
   srcPath = path.resolve(srcPath);
 
   let src = fs.readFileSync(srcPath, "utf8");
@@ -117,7 +118,7 @@ function evalForOutput(srcPath, funcName, testPath) {
   return found;
 }
 
-function completeFromTest(srcPath, targetFunc, testPath) {
+function completeFromTest(srcPath: string, targetFunc: string, testPath: string) {
   let found = evalForOutput(srcPath, targetFunc, testPath);
   if (found === null) {
     // eslint-disable-next-line no-console
@@ -130,4 +131,8 @@ function completeFromTest(srcPath, targetFunc, testPath) {
   }
 }
 
-completeFromTest("examples/roman_numerals.js", "toNumber", "examples/roman_numerals.test.js");
+completeFromTest(
+  "examples/roman_numerals.js",
+  "toNumber",
+  "examples/roman_numerals.test.js"
+);
