@@ -1,7 +1,7 @@
 import * as recast from "recast";
+import * as fs from "fs";
+import * as path from "path";
 
-let fs = require("fs");
-let path = require("path");
 let vm2 = require("vm2");
 let _ = require("lodash");
 
@@ -35,7 +35,7 @@ function appendReturnLiteral(block, value) {
   return b.blockStatement(stmts);
 }
 
-function withPatchedSrc(newSrc, srcPath, cb) {
+function withPatchedSrc<T>(newSrc: string, srcPath: string, cb: () => T) {
   srcPath = path.resolve(srcPath);
   let oldSrc = fs.readFileSync(srcPath, "utf8");
 
@@ -50,7 +50,7 @@ function withPatchedSrc(newSrc, srcPath, cb) {
   return result;
 }
 
-function sandboxEval(srcCode, srcPath, testCode, testPath) {
+function sandboxEval(srcCode: string, srcPath: string, testCode: string, testPath: string) {
   return withPatchedSrc(srcCode, srcPath, () => {
     let failureCount = 0;
     const vm = new vm2.NodeVM({
