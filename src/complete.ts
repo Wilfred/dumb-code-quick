@@ -2,10 +2,9 @@ import * as recast from "recast";
 import * as fs from "fs";
 import * as path from "path";
 import * as _ from "lodash";
+import * as vm2 from "vm2";
 
 import { builders as b, namedTypes as n } from "ast-types";
-
-let vm2 = require("vm2");
 
 function findFunc(ast: n.File, funcName: string): n.FunctionDeclaration {
   for (let i = 0; i < ast.program.body.length; i++) {
@@ -62,7 +61,7 @@ function sandboxEval(
     let failureCount = 0;
     const vm = new vm2.NodeVM({
       sandbox: {
-        test: function (_description, expectFn) {
+        test: function (_description: string, expectFn: () => void) {
           try {
             expectFn();
           } catch (e) {
