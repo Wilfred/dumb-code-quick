@@ -4,7 +4,7 @@
   "description": "A test-driven code completion tool",
   "main": "complete.js",
   "scripts": {
-    "start": "node complete.js",
+    "start": "node src/complete.js",
     "lint": "eslint . -f codeframe",
     "test": "jest"
   },
