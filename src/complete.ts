@@ -70,7 +70,6 @@ function sandboxEval(
           }
         },
       },
-      requireNative: ["module"],
       require: {
         external: true,
       },
