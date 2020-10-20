@@ -1,5 +1,10 @@
 ## Related Research
 
+### Programming with a Read-Eval-Synth Loop (2020)
+Hila Peleg, Usaroi Gabay, Shachar Itzhaky, Eran Yahav
+
+http://cseweb.ucsd.edu/~hpeleg/resl-oopsla20.pdf
+
 ### Neural Code Completion (2016)
 C. Liu, X. Wang, R. Shin, J.E. Gonzalez, D. Song
 
