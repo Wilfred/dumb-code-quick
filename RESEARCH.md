@@ -5,6 +5,9 @@ Hila Peleg, Usaroi Gabay, Shachar Itzhaky, Eran Yahav
 
 http://cseweb.ucsd.edu/~hpeleg/resl-oopsla20.pdf
 
+Uses https://www.codewars.com/ as a source of small programming
+problems.
+
 ### Neural Code Completion (2016)
 C. Liu, X. Wang, R. Shin, J.E. Gonzalez, D. Song
 
