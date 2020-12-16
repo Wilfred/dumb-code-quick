@@ -83,7 +83,11 @@ function parse(code: string): Program {
   return recast.parse(code);
 }
 
-export function evalForOutput(srcPath: string, funcName: string, testPath: string) {
+export function evalForOutput(
+  srcPath: string,
+  funcName: string,
+  testPath: string
+) {
   srcPath = path.resolve(srcPath);
 
   let src = fs.readFileSync(srcPath, "utf8");
