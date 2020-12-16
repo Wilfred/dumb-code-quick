@@ -5,6 +5,7 @@ import * as _ from "lodash";
 import * as vm2 from "vm2";
 
 import { builders as b, namedTypes as n } from "ast-types";
+import type { Program } from "esprima";
 
 function findFunc(ast: n.File, funcName: string): n.FunctionDeclaration {
   for (let i = 0; i < ast.program.body.length; i++) {
@@ -78,7 +79,7 @@ function sandboxEval(
   });
 }
 
-function parse(code: string): any {
+function parse(code: string): Program {
   return recast.parse(code);
 }
 

@@ -23,6 +23,7 @@
     "vm2": "^3.9.2"
   },
   "devDependencies": {
+    "@types/esprima": "^4.0.2",
     "@types/lodash": "^4.14.159",
     "eslint": "^7.7.0",
     "jest": "^26.4.2"
