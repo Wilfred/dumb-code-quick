@@ -82,7 +82,7 @@ function parse(code: string): any {
   return recast.parse(code);
 }
 
-function evalForOutput(srcPath: string, funcName: string, testPath: string) {
+export function evalForOutput(srcPath: string, funcName: string, testPath: string) {
   srcPath = path.resolve(srcPath);
 
   let src = fs.readFileSync(srcPath, "utf8");
@@ -122,26 +122,3 @@ function evalForOutput(srcPath: string, funcName: string, testPath: string) {
 
   return found;
 }
-
-function completeFromTest(
-  srcPath: string,
-  targetFunc: string,
-  testPath: string
-) {
-  let found = evalForOutput(srcPath, targetFunc, testPath);
-  if (found === null) {
-    // eslint-disable-next-line no-console
-    console.log("No completion found that passes this test.");
-  } else {
-    // eslint-disable-next-line no-console
-    console.log("Found!");
-    // eslint-disable-next-line no-console
-    console.log(recast.print(found).code);
-  }
-}
-
-completeFromTest(
-  "examples/roman_numerals.js",
-  "toNumber",
-  "examples/roman_numerals.test.js"
-);

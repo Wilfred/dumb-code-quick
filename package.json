@@ -5,7 +5,7 @@
   "main": "complete.js",
   "scripts": {
     "build": "tsc",
-    "demo": "node dist/complete.js",
+    "demo": "node dist/main.js",
     "start": "npm run build && npm run demo",
     "lint": "eslint . -f codeframe",
     "test": "jest"
