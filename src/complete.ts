@@ -52,7 +52,7 @@ function withPatchedSrc<T>(newSrc: string, srcPath: string, cb: () => T): T {
   return result;
 }
 
-function sandboxEval(
+function sourcePassesTest(
   srcCode: string,
   srcPath: string,
   testCode: string,
@@ -104,7 +104,7 @@ export function evalForOutput(
     f.body = appendReturnLiteral(body, val);
     let modifiedCode = recast.print(srcAst).code;
 
-    if (sandboxEval(modifiedCode, srcPath, testSrc, testPath)) {
+    if (sourcePassesTest(modifiedCode, srcPath, testSrc, testPath)) {
       found = srcAst;
       return false;
     }
@@ -119,7 +119,7 @@ export function evalForOutput(
     f.body = appendReturn(body, name);
     let modifiedCode = recast.print(srcAst).code;
 
-    if (sandboxEval(modifiedCode, srcPath, testSrc, testPath)) {
+    if (sourcePassesTest(modifiedCode, srcPath, testSrc, testPath)) {
       found = srcAst;
       return false;
     }
