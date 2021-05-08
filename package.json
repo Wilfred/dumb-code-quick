@@ -16,7 +16,7 @@
   "dependencies": {
     "acorn-loose": "^8.0.0",
     "expect": "^26.4.2",
-    "lodash": "^4.17.20",
+    "lodash": "^4.17.21",
     "recast": "^0.20.0",
     "synaptic": "^1.1.4",
     "typescript": "^4.0.2",
